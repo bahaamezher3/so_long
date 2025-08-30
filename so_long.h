@@ -7,4 +7,6 @@
 # include "../get_next_line/get_next_line.h"
 
 char **read_map_with_error_handle(char *filename);
+void freer(char **map, int i);
+
 #endif

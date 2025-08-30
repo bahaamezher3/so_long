@@ -84,6 +84,8 @@ char **read_map_with_error_handle(char *filename)
     return (map_fill);
 }
 
+
+
 int main(int argc, char **argv)
 {
     char    **map;
@@ -100,7 +102,7 @@ int main(int argc, char **argv)
         return (1);
     }
     map = read_map_with_error_handle(argv[1]);
-
+	map_validator(map);
     freer(map, i);
     return (0);
 }
