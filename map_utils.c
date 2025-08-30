@@ -2,7 +2,7 @@
 
 void dfs(char **map, int i, int j, int max_i, int max_j)
 {
-    if (i < 0 || j < 0 || i > max_i || j > max_j)
+    if (i < 0 || j < 0 || i >= max_i || j >= max_j)
         return;
     if (map[i][j] == '1' || map[i][j] == 'V')
         return;
@@ -15,15 +15,13 @@ void dfs(char **map, int i, int j, int max_i, int max_j)
 
 char **map_dup(char **map, int max_i, int max_j)
 {
-    int     i;
-    int     j;
+    int     i, j;
     char    **copy;
 
-    i = 0;
-    j = 0;
     copy = malloc(sizeof(char *) * (max_i + 1));
     if (!copy)
         return (NULL);
+    i = 0;
     while (i < max_i)
     {
         copy[i] = malloc(sizeof(char) * (max_j + 1));
@@ -32,50 +30,33 @@ char **map_dup(char **map, int max_i, int max_j)
             freer(copy, i);
             return (NULL);
         }
-        copy[i] = map[i];
+        j = 0;
+        while (j < max_j)
+        {
+            copy[i][j] = map[i][j];
+            j++;
+        }
+        copy[i][j] = '\0';
         i++;
     }
+    copy[i] = NULL;
     return (copy);
 }
 
-int check_path(char **map, int max_i, int max_j)
+int find_player_and_run_dfs(char **map_copy, int max_i, int max_j)
 {
-    int i;
-    int j;
-    int found_p;
-    int exit_reachable;
-    int collectibles_reachable;
-    char **map_copy;
-
-    i = 0;
-    map_copy = map_dup(map, max_i, max_j);
-    while (i < max_i)
+    int i, j;
+    
+    for (i = 0; i < max_i; i++)
     {
-        j = 0;
-        while (j < max_j)
+        for (j = 0; j < max_j; j++)
         {
             if (map_copy[i][j] == 'P')
             {
                 dfs(map_copy, i, j, max_i, max_j);
-                
+                return (1);
             }
-            j++;
         }
-        i++;
     }
-}
-
-void map_validator(char **map)
-{
-	int	i;
-	int	j;
-	int	i_incr;
-	int	j_incr;
-
-	map_dimentioner(map, &i, &j);
-	if (!check_path(map, i, j))
-    {
-        write(2, "No Possible Path\n", 18);
-        exit(3);
-    }
+    return (0);
 }
