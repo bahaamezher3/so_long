@@ -45,18 +45,23 @@ char **map_dup(char **map, int max_i, int max_j)
 
 int find_player_and_run_dfs(char **map_copy, int max_i, int max_j)
 {
-    int i, j;
-    
-    for (i = 0; i < max_i; i++)
+    int i;
+    int j;
+
+    i = 0;
+    while (i < max_i)
     {
-        for (j = 0; j < max_j; j++)
+        j = 0;
+        while (j < max_j)
         {
             if (map_copy[i][j] == 'P')
             {
                 dfs(map_copy, i, j, max_i, max_j);
                 return (1);
             }
+            j++;
         }
+        i++;
     }
     return (0);
 }
