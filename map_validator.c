@@ -1,5 +1,18 @@
 #include "so_long.h"
 
+static void error_exit_with_cleanup(char *message, char **map, int max_i)
+{
+    write(2, "Error\n", 6);
+    if (message)
+    {
+        write(2, message, ft_strlen_custom(message));
+        write(2, "\n", 1);
+    }
+    if (map)
+        freer(map, max_i);
+    exit(EXIT_ERROR);
+}
+
 static void error_exit(char *message)
 {
     write(2, "Error\n", 6);
@@ -181,5 +194,5 @@ int check_path(char **map, int max_i, int max_j)
 void map_validator(char **map, int max_i, int max_j)
 {
     if (!check_path(map, max_i, max_j))
-        error_exit("No valid path in map");
+        error_exit_with_cleanup("No valid path in map", map, max_i);
 }

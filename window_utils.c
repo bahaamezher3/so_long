@@ -6,6 +6,8 @@ void init_game(t_game *game)
     if (!game->mlx)
     {
         write(2, "Error: Failed to initialize MLX\n", 33);
+        if (game->map)
+            freer(game->map, game->map_height);
         exit(EXIT_ERROR);
     }
     game->win = mlx_new_window(game->mlx, game->map_width * TILE_SIZE, 
@@ -13,10 +15,45 @@ void init_game(t_game *game)
     if (!game->win)
     {
         write(2, "Error: Failed to create window\n", 31);
+        if (game->mlx)
+        {
+            mlx_destroy_display(game->mlx);
+            free(game->mlx);
+        }
+        if (game->map)
+            freer(game->map, game->map_height);
         exit(EXIT_ERROR);
     }
     game->moves = 0;
     game->collectibles = 0;
+        game->player.img = NULL;
+    game->wall.img = NULL;
+    game->collectible.img = NULL;
+    game->exit.img = NULL;
+    game->floor.img = NULL;
+}
+
+static void cleanup_images_on_error(t_game *game)
+{
+    if (game->player.img)
+        mlx_destroy_image(game->mlx, game->player.img);
+    if (game->wall.img)
+        mlx_destroy_image(game->mlx, game->wall.img);
+    if (game->collectible.img)
+        mlx_destroy_image(game->mlx, game->collectible.img);
+    if (game->exit.img)
+        mlx_destroy_image(game->mlx, game->exit.img);
+    if (game->floor.img)
+        mlx_destroy_image(game->mlx, game->floor.img);
+    if (game->win)
+        mlx_destroy_window(game->mlx, game->win);
+    if (game->mlx)
+    {
+        mlx_destroy_display(game->mlx);
+        free(game->mlx);
+    }
+    if (game->map)
+        freer(game->map, game->map_height);
 }
 
 static void load_single_image(t_game *game, t_img *img, char *path)
@@ -27,6 +64,7 @@ static void load_single_image(t_game *game, t_img *img, char *path)
         write(2, "Error: Failed to load image: ", 29);
         write(2, path, ft_strlen_custom(path));
         write(2, "\n", 1);
+        cleanup_images_on_error(game);
         exit(EXIT_ERROR);
     }
 }
@@ -161,9 +199,9 @@ int handle_keypress(int keycode, t_game *game)
         new_y--;
     else if (keycode == S || keycode == 65364) // S or DOWN arrow
         new_y++;
-    else if (keycode == A || keycode == 65361) // A or LEFT arrow
+    else if (keycode == A || keycode == 65361)
         new_x--;
-    else if (keycode == D || keycode == 65363) // D or RIGHT arrow
+    else if (keycode == D || keycode == 65363)
         new_x++;
     else
         return (0);
@@ -177,7 +215,6 @@ int handle_keypress(int keycode, t_game *game)
 
 int handle_close(t_game *game)
 {
-    // Clean up resources
     if (game->player.img)
         mlx_destroy_image(game->mlx, game->player.img);
     if (game->wall.img)

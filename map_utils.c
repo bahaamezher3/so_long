@@ -49,6 +49,23 @@ static void copy_map_row(char **copy, char **map, int i, int max_j)
     copy[i][j] = '\0';
 }
 
+// Free partial allocation on failure
+static void free_partial_map(char **copy, int allocated_rows)
+{
+    int i;
+    
+    if (!copy)
+        return;
+    i = 0;
+    while (i < allocated_rows)
+    {
+        if (copy[i])
+            free(copy[i]);
+        i++;
+    }
+    free(copy);
+}
+
 char **map_dup(char **map, int max_i, int max_j)
 {
     int     i;
@@ -57,13 +74,22 @@ char **map_dup(char **map, int max_i, int max_j)
     copy = malloc(sizeof(char *) * (max_i + 1));
     if (!copy)
         return (NULL);
+        
+    // Initialize all pointers to NULL for safe cleanup
+    i = 0;
+    while (i <= max_i)
+    {
+        copy[i] = NULL;
+        i++;
+    }
+    
     i = 0;
     while (i < max_i)
     {
         copy[i] = allocate_map_row(max_j);
         if (!copy[i])
         {
-            freer(copy, i);
+            free_partial_map(copy, i);
             return (NULL);
         }
         copy_map_row(copy, map, i, max_j);

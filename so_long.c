@@ -1,5 +1,12 @@
 #include "so_long.h"
 
+static void cleanup_and_exit(t_game *game, int exit_code)
+{
+    if (game && game->map)
+        freer(game->map, game->map_height);
+    exit(exit_code);
+}
+
 static void error_exit(char *message)
 {
     write(2, "Error\n", 6);
@@ -57,7 +64,7 @@ int get_clean_length(char *line)
     return (len);
 }
 
-static void validate_line_length(char *tmp, int len, int expected_len, int fd)
+static void validate_line_length_and_cleanup(char *tmp, int len, int expected_len, int fd)
 {
     if (expected_len == -1)
         return;
@@ -98,7 +105,7 @@ void map_dimensioner(char *filename, int *height, int *width)
         if (expected_len == -1)
             expected_len = len;
         else
-            validate_line_length(tmp, len, expected_len, fd);
+            validate_line_length_and_cleanup(tmp, len, expected_len, fd);
         line_count++;
         free(tmp);
     }
@@ -115,9 +122,12 @@ void map_dimensioner(char *filename, int *height, int *width)
 void freer(char **map, int i)
 {
     int k = 0;
+    if (!map)
+        return;
     while (k < i)
     {
-        free(map[k]);
+        if (map[k])
+            free(map[k]);
         k++;
     }
     free(map);
@@ -182,10 +192,15 @@ char **read_map_with_error_handle(char *filename)
     if (fd == -1)
         exit(EXIT_ERROR);
     map_fill = allocate_map(max_i);
+    if (!map_fill)
+    {
+        close(fd);
+        exit(EXIT_MALLOC_ERROR);
+    }
     result = read_map_lines(fd, map_fill, max_i);
     if (result == -1)
     {
-        freer(map_fill, result);
+        freer(map_fill, max_i);
         close(fd);
         exit(EXIT_MAP_ERROR);
     }
@@ -200,6 +215,11 @@ int main(int argc, char **argv)
     int     max_i;
     int     max_j;
 
+    // Initialize game structure to prevent issues
+    game.map = NULL;
+    game.mlx = NULL;
+    game.win = NULL;
+
     if (argc != 2)
         error_exit("Usage: ./so_long map.ber");
     
@@ -211,15 +231,14 @@ int main(int argc, char **argv)
     if (!game.map)
         error_exit("Failed to load map");
 
-    if (!check_path(game.map, max_i, max_j))
-    {
-        freer(game.map, max_i);
-        error_exit("Invalid map - no valid path");
-    }
-
     game.map_height = max_i;
     game.map_width = max_j;
-    
+
+    if (!check_path(game.map, max_i, max_j))
+    {
+        cleanup_and_exit(&game, EXIT_ERROR);
+    }
+
     init_game(&game);
     load_images(&game);
     find_player_position(&game);
