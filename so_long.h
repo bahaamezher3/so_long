@@ -84,5 +84,6 @@ int     handle_close(t_game *game);
 /* Utility functions */
 void    put_nbr(int n);
 int     ft_strlen_custom(const char *s);
+void    *ft_memset(void *s, int c, size_t n);
 
 #endif

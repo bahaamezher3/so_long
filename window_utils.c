@@ -1,7 +1,22 @@
 #include "so_long.h"
 
+
 void init_game(t_game *game)
 {
+    // Initialize all game structure members to safe values
+    game->moves = 0;
+    game->collectibles = 0;
+    game->player_x = 0;
+    game->player_y = 0;
+    
+    // Initialize all image structures
+    ft_memset(&game->player, 0, sizeof(t_img));
+    ft_memset(&game->wall, 0, sizeof(t_img));
+    ft_memset(&game->collectible, 0, sizeof(t_img));
+    ft_memset(&game->exit, 0, sizeof(t_img));
+    ft_memset(&game->floor, 0, sizeof(t_img));
+    
+    // Initialize MLX
     game->mlx = mlx_init();
     if (!game->mlx)
     {
@@ -10,6 +25,8 @@ void init_game(t_game *game)
             freer(game->map, game->map_height);
         exit(EXIT_ERROR);
     }
+    
+    // Create window
     game->win = mlx_new_window(game->mlx, game->map_width * TILE_SIZE, 
                               game->map_height * TILE_SIZE, "so_long");
     if (!game->win)
@@ -24,13 +41,6 @@ void init_game(t_game *game)
             freer(game->map, game->map_height);
         exit(EXIT_ERROR);
     }
-    game->moves = 0;
-    game->collectibles = 0;
-        game->player.img = NULL;
-    game->wall.img = NULL;
-    game->collectible.img = NULL;
-    game->exit.img = NULL;
-    game->floor.img = NULL;
 }
 
 static void cleanup_images_on_error(t_game *game)
@@ -58,7 +68,15 @@ static void cleanup_images_on_error(t_game *game)
 
 static void load_single_image(t_game *game, t_img *img, char *path)
 {
+    img->img = NULL;
+    img->addr = NULL;
+    img->bits_per_pixel = 0;
+    img->line_length = 0;
+    img->endian = 0;
+    img->width = 0;
+    img->height = 0;
     img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
+
     if (!img->img)
     {
         write(2, "Error: Failed to load image: ", 29);
@@ -67,6 +85,9 @@ static void load_single_image(t_game *game, t_img *img, char *path)
         cleanup_images_on_error(game);
         exit(EXIT_ERROR);
     }
+    
+    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, 
+                                 &img->line_length, &img->endian);
 }
 
 void load_images(t_game *game)

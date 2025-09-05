@@ -215,10 +215,8 @@ int main(int argc, char **argv)
     int     max_i;
     int     max_j;
 
-    // Initialize game structure to prevent issues
-    game.map = NULL;
-    game.mlx = NULL;
-    game.win = NULL;
+    // Initialize entire game structure to zero
+    ft_memset(&game, 0, sizeof(t_game));
 
     if (argc != 2)
         error_exit("Usage: ./so_long map.ber");
