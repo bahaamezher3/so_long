@@ -29,7 +29,7 @@ int check_boundaries(char **map, int max_i, int max_j)
     int i;
     int j;
 
-    if (!map)
+    if (!map || max_i <= 0 || max_j <= 0)
         return (0);
 
     if (max_i < 3 || max_j < 3)
@@ -75,9 +75,14 @@ int validate_elements(char **map, int max_i, int max_j)
     int count_c;
     int count_p;
 
+    if (!map || max_i <= 0 || max_j <= 0)
+        return (0);
+
+    // Initialize all counters to 0
     count_c = 0;
     count_e = 0;
     count_p = 0;
+    
     i = 0;
     while (i < max_i)
     {
@@ -105,6 +110,9 @@ int check_collectibles_reachable(char **map, char **map_copy, int max_i, int max
     int i;
     int j;
 
+    if (!map || !map_copy || max_i <= 0 || max_j <= 0)
+        return (0);
+
     i = 0;
     while (i < max_i)
     {
@@ -125,6 +133,9 @@ int check_exit_reachable(char **map, char **map_copy, int max_i, int max_j)
 {
     int i;
     int j;
+
+    if (!map || !map_copy || max_i <= 0 || max_j <= 0)
+        return (0);
 
     i = 0;
     while (i < max_i)
@@ -147,6 +158,9 @@ int check_path(char **map, int max_i, int max_j)
     char **map_copy1;
     char **map_copy2;
     int result;
+
+    if (!map || max_i <= 0 || max_j <= 0)
+        error_exit("Invalid map parameters");
 
     if (!check_boundaries(map, max_i, max_j))
         error_exit("Map must be rectangular and surrounded by walls");
@@ -193,6 +207,9 @@ int check_path(char **map, int max_i, int max_j)
 
 void map_validator(char **map, int max_i, int max_j)
 {
+    if (!map || max_i <= 0 || max_j <= 0)
+        error_exit_with_cleanup("Invalid map parameters", map, max_i);
+    
     if (!check_path(map, max_i, max_j))
         error_exit_with_cleanup("No valid path in map", map, max_i);
 }

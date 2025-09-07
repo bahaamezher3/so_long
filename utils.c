@@ -2,7 +2,10 @@
 
 void put_nbr(int n)
 {
-    char    c;
+    char c;
+
+    // Initialize character variable
+    c = '0';
 
     if (n < 0)
     {
@@ -24,6 +27,9 @@ int ft_strlen_custom(const char *s)
 {
     int len;
 
+    if (!s)
+        return (0);
+
     len = 0;
     while (s[len])
         len++;
@@ -33,6 +39,9 @@ int ft_strlen_custom(const char *s)
 void *ft_memset(void *s, int c, size_t n)
 {
     unsigned char *p;
+    
+    if (!s)
+        return (NULL);
     
     p = s;
     while (n--)

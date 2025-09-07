@@ -33,6 +33,10 @@ static char *allocate_map_row(int max_j)
     char *row;
 
     row = malloc(sizeof(char) * (max_j + 1));
+    if (!row)
+        return (NULL);
+    // Initialize the row to prevent uninitialized values
+    ft_memset(row, '\0', max_j + 1);
     return (row);
 }
 
@@ -71,6 +75,9 @@ char **map_dup(char **map, int max_i, int max_j)
     int     i;
     char    **copy;
 
+    if (!map || max_i <= 0 || max_j <= 0)
+        return (NULL);
+
     copy = malloc(sizeof(char *) * (max_i + 1));
     if (!copy)
         return (NULL);
@@ -104,6 +111,9 @@ int find_player_and_run_dfs_collectibles(char **map_copy, int max_i, int max_j)
     int i;
     int j;
 
+    if (!map_copy || max_i <= 0 || max_j <= 0)
+        return (0);
+
     i = 0;
     while (i < max_i)
     {
@@ -126,6 +136,9 @@ int find_player_and_run_dfs_exit(char **map_copy, int max_i, int max_j)
 {
     int i;
     int j;
+
+    if (!map_copy || max_i <= 0 || max_j <= 0)
+        return (0);
 
     i = 0;
     while (i < max_i)

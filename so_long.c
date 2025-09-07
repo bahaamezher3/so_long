@@ -54,6 +54,9 @@ int get_clean_length(char *line)
 {
     int len;
     
+    if (!line)
+        return (0);
+    
     len = ft_strlen(line);
     while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r' 
                       || line[len - 1] == ' ' || line[len - 1] == '\t'))
@@ -85,8 +88,19 @@ void map_dimensioner(char *filename, int *height, int *width)
     int     line_count;
     char    *tmp;
 
+    if (!filename || !height || !width)
+        exit(EXIT_ERROR);
+
+    // Initialize output parameters
+    *height = 0;
+    *width = 0;
+    
+    // Initialize local variables
     line_count = 0;
     expected_len = -1;
+    len = 0;
+    tmp = NULL;
+    
     fd = open(filename, O_RDONLY);
     if (fd == -1)
         exit(EXIT_ERROR);
@@ -122,6 +136,7 @@ void map_dimensioner(char *filename, int *height, int *width)
 void freer(char **map, int i)
 {
     int k = 0;
+    
     if (!map)
         return;
     while (k < i)
@@ -151,7 +166,10 @@ static char **allocate_map(int max_i)
     }
     i = 0;
     while (i <= max_i)
-        map_fill[i++] = NULL;
+    {
+        map_fill[i] = NULL;
+        i++;
+    }
     return (map_fill);
 }
 
@@ -161,7 +179,13 @@ static int read_map_lines(int fd, char **map_fill, int max_i)
     char    *tmp;
     int     len;
 
+    if (!map_fill || max_i <= 0)
+        return (-1);
+
     i = 0;
+    len = 0;
+    tmp = NULL;
+    
     while (i < max_i)
     {
         tmp = get_next_line(fd);
@@ -186,6 +210,15 @@ char **read_map_with_error_handle(char *filename)
     int     max_i;
     int     max_j;
     int     result;
+
+    if (!filename)
+        exit(EXIT_ERROR);
+
+    // Initialize variables
+    max_i = 0;
+    max_j = 0;
+    map_fill = NULL;
+    result = 0;
 
     map_dimensioner(filename, &max_i, &max_j);
     fd = open(filename, O_RDONLY);
@@ -217,6 +250,10 @@ int main(int argc, char **argv)
 
     // Initialize entire game structure to zero
     ft_memset(&game, 0, sizeof(t_game));
+    
+    // Initialize variables
+    max_i = 0;
+    max_j = 0;
 
     if (argc != 2)
         error_exit("Usage: ./so_long map.ber");
