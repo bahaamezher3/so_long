@@ -1,0 +1,115 @@
+#include "so_long.h"
+
+void	cleanup_images_on_error(t_game *game)
+{
+	if (!game)
+		return ;
+	if (game->player.img)
+		mlx_destroy_image(game->mlx, game->player.img);
+	if (game->wall.img)
+		mlx_destroy_image(game->mlx, game->wall.img);
+	if (game->collectible.img)
+		mlx_destroy_image(game->mlx, game->collectible.img);
+	if (game->exit.img)
+		mlx_destroy_image(game->mlx, game->exit.img);
+	if (game->floor.img)
+		mlx_destroy_image(game->mlx, game->floor.img);
+	if (game->win)
+		mlx_destroy_window(game->mlx, game->win);
+	if (game->mlx)
+	{
+		mlx_destroy_display(game->mlx);
+		free(game->mlx);
+	}
+	if (game->map)
+		freer(game->map, game->map_height);
+}
+
+void	load_single_image(t_game *game, t_img *img, char *path)
+{
+	int	width;
+	int	height;
+
+	if (!game || !img || !path)
+		return ;
+	init_img_struct(img);
+	img->img = mlx_xpm_file_to_image(game->mlx, path, &width, &height);
+	if (!img->img)
+	{
+		write(2, "Error: Failed to load image: ", 29);
+		write(2, path, ft_strlen_custom(path));
+		write(2, "\n", 1);
+		cleanup_images_on_error(game);
+		exit(EXIT_ERROR);
+	}
+	img->width = width;
+	img->height = height;
+	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel,
+			&img->line_length, &img->endian);
+	if (!img->addr)
+	{
+		write(2, "Error: Failed to get image data: ", 32);
+		write(2, path, ft_strlen_custom(path));
+		write(2, "\n", 1);
+		cleanup_images_on_error(game);
+		exit(EXIT_ERROR);
+	}
+}
+
+void	load_images(t_game *game)
+{
+	if (!game)
+		return ;
+	load_single_image(game, &game->player, "assets/wizard.xpm");
+	load_single_image(game, &game->wall, "assets/tree_wall.xpm");
+	load_single_image(game, &game->collectible, "assets/crystal.xpm");
+	load_single_image(game, &game->exit, "assets/portal.xpm");
+	load_single_image(game, &game->floor, "assets/forest_floor.xpm");
+}
+
+void	find_player_position(t_game *game)
+{
+	int	i;
+	int	j;
+
+	if (!game || !game->map)
+		return ;
+	i = 0;
+	while (i < game->map_height)
+	{
+		j = 0;
+		while (j < game->map_width)
+		{
+			if (game->map[i][j] == 'P')
+			{
+				game->player_x = j;
+				game->player_y = i;
+				return ;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+void	count_collectibles(t_game *game)
+{
+	int	i;
+	int	j;
+
+	if (!game || !game->map)
+		return ;
+	game->collectibles = 0;
+	i = 0;
+	while (i < game->map_height)
+	{
+		j = 0;
+		while (j < game->map_width)
+		{
+			if (game->map[i][j] == 'C')
+				game->collectibles++;
+			j++;
+		}
+		i++;
+	}
+}
