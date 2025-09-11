@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   so_long.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
@@ -49,6 +61,14 @@ typedef struct s_game
 	int		moves;
 }	t_game;
 
+typedef struct s_move
+{
+	int	old_x;
+	int	old_y;
+	int	new_x;
+	int	new_y;
+}	t_move;
+
 char	**read_map_with_error_handle(char *filename);
 void	map_dimensioner(char *filename, int *height, int *width);
 int		get_clean_length(char *line);
@@ -58,14 +78,16 @@ int		check_file_access(char *filename);
 int		check_path(char **map, int max_i, int max_j);
 int		check_boundaries(char **map, int max_i, int max_j);
 int		validate_elements(char **map, int max_i, int max_j);
+int		update_counts_and_validate_cell(char cell, int *count_p,
+			int *count_e, int *count_c);
 int		check_collectibles_reachable(char **map, char **map_copy,
 			int max_i, int max_j);
 int		check_exit_reachable(char **map, char **map_copy,
 			int max_i, int max_j);
 void	map_validator(char **map, int max_i, int max_j);
 
-void	dfs_collectibles(char **map, int i, int j, int max_i, int max_j);
-void	dfs_exit(char **map, int i, int j, int max_i, int max_j);
+void	dfs_collectibles(char **map, int i, int j, int dims[2]);
+void	dfs_exit(char **map, int i, int j, int dims[2]);
 char	**map_dup(char **map, int max_i, int max_j);
 int		find_player_and_run_dfs_collectibles(char **map_copy,
 			int max_i, int max_j);
@@ -88,9 +110,10 @@ void	init_game_values(t_game *game);
 void	cleanup_on_init_error(t_game *game);
 void	load_single_image(t_game *game, t_img *img, char *path);
 void	cleanup_images_on_error(t_game *game);
+void	handle_image_load_error(t_game *game, char *path, char *prefix);
+void	validate_and_get_image_data(t_game *game, t_img *img, char *path);
 int		move_player(t_game *game, int new_x, int new_y);
-void	redraw_player_move(t_game *game, int old_x, int old_y,
-			int new_x, int new_y);
+void	redraw_player_move(t_game *game, t_move move);
 void	handle_win_condition(t_game *game);
 void	update_player_position(t_game *game, int new_x, int new_y);
 
@@ -100,6 +123,15 @@ int		check_element_counts(int count_p, int count_e, int count_c);
 int		validate_map_basic_checks(char **map, int max_i, int max_j);
 int		validate_collectibles_path(char **map, int max_i, int max_j);
 int		validate_exit_path(char **map, int max_i, int max_j);
+
+int		read_and_process_line(int fd, int *expected_len, int *line_count);
+int		open_or_exit_ro(char *filename);
+char	**allocate_map_or_exit(int fd, int max_i);
+void	handle_read_result(int result, char **map_fill, int max_i, int fd);
+void	init_dimension_counters(int *height, int *width,
+			int *line_count, int *expected_len);
+void	validate_dimensions_or_exit(int line_count, int expected_len);
+void	scan_dimensions(int fd, int *expected_len, int *line_count);
 
 char	*allocate_map_row(int max_j);
 void	copy_map_row(char **copy, char **map, int i, int max_j);

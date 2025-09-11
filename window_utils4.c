@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   window_utils4.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 int	move_player(t_game *game, int new_x, int new_y)
 {
-	int	old_x;
-	int	old_y;
+	int		old_x;
+	int		old_y;
+	t_move	move;
 
 	if (!game || !game->map)
 		return (0);
@@ -16,7 +29,11 @@ int	move_player(t_game *game, int new_x, int new_y)
 	else if (game->map[new_y][new_x] == 'E')
 		return (0);
 	update_player_position(game, new_x, new_y);
-	redraw_player_move(game, old_x, old_y, new_x, new_y);
+	move.old_x = old_x;
+	move.old_y = old_y;
+	move.new_x = new_x;
+	move.new_y = new_y;
+	redraw_player_move(game, move);
 	return (1);
 }
 

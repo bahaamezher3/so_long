@@ -2,13 +2,17 @@ NAME = so_long
 
 SRCS = so_long.c \
        so_long2.c \
+       so_long3.c \
+       so_long4.c \
        utils.c \
        map_utils.c \
        map_utils2.c \
        map_validator.c \
        map_validator2.c \
+       map_validator3.c \
        window_utils.c \
        window_utils2.c \
+       window_utils5.c \
        window_utils3.c \
        window_utils4.c
 

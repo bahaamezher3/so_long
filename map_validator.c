@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map_validator.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 int	check_boundaries(char **map, int max_i, int max_j)
@@ -56,13 +68,8 @@ int	validate_elements(char **map, int max_i, int max_j)
 		j = 0;
 		while (j < max_j)
 		{
-			if (map[i][j] == 'P')
-				count_p++;
-			else if (map[i][j] == 'E')
-				count_e++;
-			else if (map[i][j] == 'C')
-				count_c++;
-			else if (map[i][j] != '0' && map[i][j] != '1')
+			if (!update_counts_and_validate_cell(map[i][j],
+				&count_p, &count_e, &count_c))
 				return (0);
 			j++;
 		}

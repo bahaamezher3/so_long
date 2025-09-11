@@ -1,46 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   so_long2.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 void	map_dimensioner(char *filename, int *height, int *width)
 {
 	int		fd;
-	int		len;
 	int		expected_len;
 	int		line_count;
-	char	*tmp;
 
-	if (!filename || !height || !width)
-		exit(EXIT_ERROR);
-	*height = 0;
-	*width = 0;
-	line_count = 0;
-	expected_len = -1;
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-		exit(EXIT_ERROR);
-	while (1)
-	{
-		tmp = get_next_line(fd);
-		if (!tmp)
-			break ;
-		len = get_clean_length(tmp);
-		if (len == 0)
-		{
-			free(tmp);
-			continue ;
-		}
-		if (expected_len == -1)
-			expected_len = len;
-		else
-			validate_line_length_and_cleanup(tmp, len, expected_len, fd);
-		line_count++;
-		free(tmp);
-	}
+	init_dimension_counters(height, width, &line_count, &expected_len);
+	fd = open_or_exit_ro(filename);
+	scan_dimensions(fd, &expected_len, &line_count);
 	close(fd);
-	if (line_count == 0 || expected_len <= 0)
-	{
-		write(2, "Map Error: Empty or invalid map\n", 33);
-		exit(EXIT_ERROR);
-	}
+	validate_dimensions_or_exit(line_count, expected_len);
 	*height = line_count;
 	*width = expected_len;
 }
@@ -107,22 +89,10 @@ char	**read_map_with_error_handle(char *filename)
 	if (!filename)
 		exit(EXIT_ERROR);
 	map_dimensioner(filename, &max_i, &max_j);
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-		exit(EXIT_ERROR);
-	map_fill = allocate_map(max_i);
-	if (!map_fill)
-	{
-		close(fd);
-		exit(EXIT_MALLOC_ERROR);
-	}
+	fd = open_or_exit_ro(filename);
+	map_fill = allocate_map_or_exit(fd, max_i);
 	result = read_map_lines(fd, map_fill, max_i);
-	if (result == -1)
-	{
-		freer(map_fill, max_i);
-		close(fd);
-		exit(EXIT_MAP_ERROR);
-	}
+	handle_read_result(result, map_fill, max_i, fd);
 	map_fill[result] = NULL;
 	close(fd);
 	return (map_fill);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   window_utils2.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 void	cleanup_images_on_error(t_game *game)
@@ -27,33 +39,18 @@ void	cleanup_images_on_error(t_game *game)
 
 void	load_single_image(t_game *game, t_img *img, char *path)
 {
-	int	width;
-	int	height;
+	int		width;
+	int		height;
 
 	if (!game || !img || !path)
 		return ;
 	init_img_struct(img);
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &width, &height);
 	if (!img->img)
-	{
-		write(2, "Error: Failed to load image: ", 29);
-		write(2, path, ft_strlen_custom(path));
-		write(2, "\n", 1);
-		cleanup_images_on_error(game);
-		exit(EXIT_ERROR);
-	}
+		handle_image_load_error(game, path, "Error: Failed to load image: ");
 	img->width = width;
 	img->height = height;
-	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel,
-			&img->line_length, &img->endian);
-	if (!img->addr)
-	{
-		write(2, "Error: Failed to get image data: ", 32);
-		write(2, path, ft_strlen_custom(path));
-		write(2, "\n", 1);
-		cleanup_images_on_error(game);
-		exit(EXIT_ERROR);
-	}
+	validate_and_get_image_data(game, img, path);
 }
 
 void	load_images(t_game *game)
@@ -69,8 +66,8 @@ void	load_images(t_game *game)
 
 void	find_player_position(t_game *game)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 
 	if (!game || !game->map)
 		return ;
@@ -94,8 +91,8 @@ void	find_player_position(t_game *game)
 
 void	count_collectibles(t_game *game)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 
 	if (!game || !game->map)
 		return ;

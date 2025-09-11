@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map_validator2.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 int	validate_map_basic_checks(char **map, int max_i, int max_j)
@@ -5,7 +17,8 @@ int	validate_map_basic_checks(char **map, int max_i, int max_j)
 	if (!check_boundaries(map, max_i, max_j))
 		error_exit("Map must be rectangular and surrounded by walls");
 	if (!validate_elements(map, max_i, max_j))
-		error_exit("Map must contain exactly 1 player, 1 exit, and at least 1 collectible");
+		error_exit("Map must contain exactly 1 player, 1 exit, and "
+			"at least 1 collectible");
 	return (1);
 }
 

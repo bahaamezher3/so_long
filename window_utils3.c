@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   window_utils3.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 void	draw_tile(t_game *game, int x, int y)
@@ -44,13 +56,12 @@ void	draw_map(t_game *game)
 	}
 }
 
-void	redraw_player_move(t_game *game, int old_x, int old_y,
-		int new_x, int new_y)
+void	redraw_player_move(t_game *game, t_move move)
 {
 	if (!game || !game->map)
 		return ;
-	draw_tile(game, old_x, old_y);
-	draw_tile(game, new_x, new_y);
+	draw_tile(game, move.old_x, move.old_y);
+	draw_tile(game, move.new_x, move.new_y);
 }
 
 void	handle_win_condition(t_game *game)
