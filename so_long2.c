@@ -121,6 +121,7 @@ int	main(int argc, char **argv)
 	find_player_position(&game);
 	count_collectibles(&game);
 	draw_map(&game);
+	mlx_expose_hook(game.win, handle_expose, &game);
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 17, 1L << 17, handle_close, &game);
 	mlx_loop(game.mlx);

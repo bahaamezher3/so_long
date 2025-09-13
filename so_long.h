@@ -116,6 +116,7 @@ int		move_player(t_game *game, int new_x, int new_y);
 void	redraw_player_move(t_game *game, t_move move);
 void	handle_win_condition(t_game *game);
 void	update_player_position(t_game *game, int new_x, int new_y);
+int		handle_expose(t_game *game);
 
 void	error_exit(char *message);
 void	error_exit_with_cleanup(char *message, char **map, int max_i);
