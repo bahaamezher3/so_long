@@ -55,11 +55,14 @@ void	load_single_image(t_game *game, t_img *img, char *path)
 
 void	load_images(t_game *game)
 {
+	char	*collectible_path;
+
 	if (!game)
 		return ;
 	load_single_image(game, &game->player, "assets/xpm_assets/player.xpm");
 	load_single_image(game, &game->wall, "assets/xpm_assets/wall.xpm");
-	load_single_image(game, &game->collectible, "assets/xpm_assets/collectible.xpm");
+	collectible_path = "assets/xpm_assets/collectible.xpm";
+	load_single_image(game, &game->collectible, collectible_path);
 	load_single_image(game, &game->exit, "assets/xpm_assets/exit.xpm");
 	load_single_image(game, &game->floor, "assets/xpm_assets/floor.xpm");
 }

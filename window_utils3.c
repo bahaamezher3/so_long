@@ -81,11 +81,3 @@ void	update_player_position(t_game *game, int new_x, int new_y)
 	put_nbr(game->moves);
 	write(1, "\n", 1);
 }
-
-int	handle_expose(t_game *game)
-{
-    if (!game)
-        return (0);
-    draw_map(game);
-    return (0);
-}

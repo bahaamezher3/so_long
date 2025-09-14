@@ -142,8 +142,11 @@ void	init_map_pointers(char **copy, int max_i);
 int		check_file_extension(char *filename);
 void	validate_line_length_and_cleanup(char *tmp, int len,
 			int expected_len, int fd);
+
 char	**allocate_map(int max_i);
 int		read_map_lines(int fd, char **map_fill, int max_i);
+void	init_and_validate_game(t_game *game, char **argv);
+void	setup_game_graphics(t_game *game);
 void	cleanup_and_exit(t_game *game, int exit_code);
 
 #endif

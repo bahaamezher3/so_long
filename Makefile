@@ -1,52 +1,37 @@
 NAME = so_long
-
-SRCS = so_long.c \
-       so_long2.c \
-       so_long3.c \
-       so_long4.c \
-       utils.c \
-       map_utils.c \
-       map_utils2.c \
-       map_validator.c \
-       map_validator2.c \
-       map_validator3.c \
-       window_utils.c \
-       window_utils2.c \
-       window_utils5.c \
-       window_utils3.c \
-       window_utils4.c
-
-OBJS = $(SRCS:.c=.o)
-
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 
-# MiniLibX
-MLX_DIR = minilibx-linux
-MLX_LIB = $(MLX_DIR)/libmlx.a
-MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
+SRCS = so_long.c so_long2.c so_long3.c so_long4.c so_long5.c \
+       map_utils.c map_utils2.c \
+       map_validator.c map_validator2.c map_validator3.c \
+       window_utils.c window_utils2.c window_utils3.c window_utils4.c window_utils5.c window_utils6.c \
+       utils.c \
+       get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
 
-GNL_DIR = get_next_line
-GNL_SRCS = $(GNL_DIR)/get_next_line.c $(GNL_DIR)/get_next_line_utils.c
-GNL_OBJS = $(GNL_SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
-all: $(MLX_LIB) $(NAME)
+LIBMLX = minilibx-linux/libmlx.a
+LIBS = -Lminilibx-linux -lmlx -lXext -lX11 -lm
 
-$(NAME): $(OBJS) $(GNL_OBJS)
-	$(CC) $(OBJS) $(GNL_OBJS) $(MLX_FLAGS) -o $(NAME)
+all: $(LIBMLX) $(NAME)
 
-$(MLX_LIB):
-	$(MAKE) -C $(MLX_DIR)
+$(LIBMLX):
+	make -C minilibx-linux
+
+$(NAME): $(OBJS)
+	$(CC) $(OBJS) $(LIBS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(GNL_OBJS)
-	$(MAKE) -C $(MLX_DIR) clean
+	rm -f $(OBJS)
+	make clean -C minilibx-linux
 
 fclean: clean
 	rm -f $(NAME)
+	make clean -C minilibx-linux
 
 re: fclean all
 
