@@ -57,11 +57,11 @@ void	load_images(t_game *game)
 {
 	if (!game)
 		return ;
-	load_single_image(game, &game->player, "assets/wizard.xpm");
-	load_single_image(game, &game->wall, "assets/tree_wall.xpm");
-	load_single_image(game, &game->collectible, "assets/crystal.xpm");
-	load_single_image(game, &game->exit, "assets/portal.xpm");
-	load_single_image(game, &game->floor, "assets/forest_floor.xpm");
+	load_single_image(game, &game->player, "assets/xpm_assets/player.xpm");
+	load_single_image(game, &game->wall, "assets/xpm_assets/wall.xpm");
+	load_single_image(game, &game->collectible, "assets/xpm_assets/collectible.xpm");
+	load_single_image(game, &game->exit, "assets/xpm_assets/exit.xpm");
+	load_single_image(game, &game->floor, "assets/xpm_assets/floor.xpm");
 }
 
 void	find_player_position(t_game *game)

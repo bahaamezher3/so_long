@@ -20,7 +20,7 @@
 # include "get_next_line/get_next_line.h"
 # include "minilibx-linux/mlx.h"
 
-# define TILE_SIZE 32
+# define TILE_SIZE 64
 # define ESC 65307
 # define W 119
 # define A 97
