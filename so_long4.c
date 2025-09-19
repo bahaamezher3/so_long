@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
-/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*   Created: 2025/09/16 14:11:53 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/16 15:12:07 by bmezher          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,20 @@ int	open_or_exit_ro(char *filename)
 	if (fd == -1)
 		exit(EXIT_ERROR);
 	return (fd);
+}
+
+static void	cleanup_fd_exit_line(int fd)
+{
+	char	*tmp;
+
+	tmp = get_next_line(fd);
+	while (tmp != NULL)
+	{
+		free(tmp);
+		tmp = get_next_line(fd);
+	}
+	close(fd);
+	exit(EXIT_ERROR);
 }
 
 int	read_and_process_line(int fd, int *expected_len, int *line_count)
@@ -38,8 +52,12 @@ int	read_and_process_line(int fd, int *expected_len, int *line_count)
 	}
 	if (*expected_len == -1)
 		*expected_len = len;
-	else
-		validate_line_length_and_cleanup(tmp, len, *expected_len, fd);
+	else if (len != *expected_len)
+	{
+		write(2, "Map Error: Inconsistent line length\n", 37);
+		free(tmp);
+		cleanup_fd_exit_line(fd);
+	}
 	(*line_count)++;
 	free(tmp);
 	return (1);

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
-/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*   Created: 2025/09/16 14:11:22 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/16 14:11:22 by bmezher          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,15 @@ typedef struct s_move
 	int	new_x;
 	int	new_y;
 }	t_move;
+
+typedef struct s_mapread
+{
+	char	**map_fill;
+	int		i;
+	int		max_i;
+	int		map_ended;
+	int		fd;
+}	t_mapread;
 
 char	**read_map_with_error_handle(char *filename);
 void	map_dimensioner(char *filename, int *height, int *width);
@@ -148,5 +157,11 @@ int		read_map_lines(int fd, char **map_fill, int max_i);
 void	init_and_validate_game(t_game *game, char **argv);
 void	setup_game_graphics(t_game *game);
 void	cleanup_and_exit(t_game *game, int exit_code);
-
+void	check_line_length(int *expected_len, int len, char *tmp, int fd);
+void	check_map_continuity(int map_ended, int len, char *tmp, int fd);
+void	check_first_line(int first_line, int len, char *tmp, int fd);
+void	cleanup_fd_exit(int fd);
+void	init_dimension_counters(int *h, int *w,
+			int *line_count, int *expected_len);
+void	cleanup_remaining_lines(int fd);
 #endif

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bmezher <bmezher@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 00:00:00 by bmezher           #+#    #+#             */
-/*   Updated: 2025/09/11 00:00:00 by bmezher          ###   ########.fr       */
+/*   Created: 2025/09/16 14:11:13 by bmezher           #+#    #+#             */
+/*   Updated: 2025/09/16 14:11:13 by bmezher          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,31 +45,21 @@ int	check_file_access(char *filename)
 int	get_clean_length(char *line)
 {
 	int	len;
+	int	orig_len;
 
 	if (!line)
 		return (0);
 	len = ft_strlen(line);
+	orig_len = len;
 	while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r'
 			|| line[len - 1] == ' ' || line[len - 1] == '\t'))
 	{
 		line[len - 1] = '\0';
 		len--;
 	}
+	if (len == 0 && orig_len > 0)
+		return (0);
 	return (len);
-}
-
-void	validate_line_length_and_cleanup(char *tmp, int len,
-		int expected_len, int fd)
-{
-	if (expected_len == -1)
-		return ;
-	if (len != expected_len)
-	{
-		write(2, "Map Error: Inconsistent line length\n", 37);
-		free(tmp);
-		close(fd);
-		exit(EXIT_ERROR);
-	}
 }
 
 void	freer(char **map, int i)
